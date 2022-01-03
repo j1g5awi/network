@@ -93,7 +93,7 @@ func (c *Client) Receive(raddr *net.UDPAddr, msg *Message) {
 	case DISCONNECT:
 		if msg.data != "" {
 			if msg.data == "T" {
-				raddr = nil
+				c.raddr = nil
 				fmt.Println("Disconnected")
 			}
 		}
