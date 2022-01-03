@@ -27,10 +27,13 @@ func (c *Client) Listen() {
 
 		fmt.Println(buf[:n])
 
-		msg := &Message{}
-		msg.UnMarsal(buf[:n])
+		msg := UnMarsal(buf[:n])
 		if int(msg.length) != n {
 			c.Send(addr, NewMessage(ERROR, "Wrong length!"))
+			continue
+		}
+		if CheckSum(buf[:n-2]) != msg.checksum {
+			c.Send(addr, NewMessage(ERROR, "Wrong checksum!"))
 			continue
 		}
 		c.Receive(addr, msg)
@@ -72,7 +75,7 @@ func (c *Client) Receive(raddr *net.UDPAddr, msg *Message) {
 				c.maxDataLength = 50
 			}
 		} else {
-			fmt.Println("Require auth!")
+			fmt.Println("Require ensure connect!")
 		}
 	case AUTH:
 		if msg.data != "" {
@@ -152,6 +155,13 @@ func main() {
 					text = append(text, "")
 				}
 				client.Send(nil, NewMessage(DATA, text[1]))
+			case "/mockdata":
+				if len(text) < 2 {
+					text = append(text, "")
+				}
+				msg := NewMessage(DATA, text[1])
+				msg.checksum += 1
+				client.Send(nil, msg)
 			case "/disconnect":
 				if len(text) < 2 {
 					text = append(text, "")
