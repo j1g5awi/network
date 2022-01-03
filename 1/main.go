@@ -43,7 +43,13 @@ func main() {
 					for {
 						n, err := conn.Read(buf)
 						if err == nil {
-							fmt.Println(string(buf[:n]))
+							var data string
+							if text[1] == "ip" {
+								data = string(buf[16:n])
+							} else {
+								data = string(buf[:n])
+							}
+							fmt.Println(data)
 						}
 					}
 				}()
