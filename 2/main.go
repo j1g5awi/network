@@ -126,30 +126,37 @@ func main() {
 
 				go client.Listen()
 			case "/connect":
+				if len(text) < 3 {
+					text = append(text, "")
+				}
+
 				raddr, err := net.ResolveUDPAddr("udp", text[1])
 				if err != nil {
 					panic(err)
 				}
 
-				data, _ := reader.ReadString('\n')
-				data = strings.TrimSpace(data)
-				client.Send(raddr, NewMessage(CONNECT, data))
+				client.Send(raddr, NewMessage(CONNECT, text[2]))
 			case "/auth":
+				if len(text) < 3 {
+					text = append(text, "")
+				}
+
 				raddr, err := net.ResolveUDPAddr("udp", text[1])
 				if err != nil {
 					panic(err)
 				}
-				data, _ := reader.ReadString('\n')
-				data = strings.TrimSpace(data)
-				client.Send(raddr, NewMessage(AUTH, data))
+
+				client.Send(raddr, NewMessage(AUTH, text[2]))
 			case "/data":
-				data, _ := reader.ReadString('\n')
-				data = strings.TrimSpace(data)
-				client.Send(nil, NewMessage(DATA, data))
+				if len(text) < 2 {
+					text = append(text, "")
+				}
+				client.Send(nil, NewMessage(DATA, text[1]))
 			case "/disconnect":
-				data, _ := reader.ReadString('\n')
-				data = strings.TrimSpace(data)
-				client.Send(nil, NewMessage(DISCONNECT, data))
+				if len(text) < 2 {
+					text = append(text, "")
+				}
+				client.Send(nil, NewMessage(DISCONNECT, text[1]))
 			}
 		}
 	}
