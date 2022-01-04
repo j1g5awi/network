@@ -49,6 +49,7 @@ func (c *Client) Send(raddr *net.UDPAddr, msg *Message) {
 			c.conn.WriteToUDP(msg.Marsal(), raddr)
 			c.raddr = nil
 			fmt.Println("Disconnected")
+			return
 		}
 	}
 	c.conn.WriteToUDP(msg.Marsal(), raddr)
@@ -99,6 +100,8 @@ func (c *Client) Receive(raddr *net.UDPAddr, msg *Message) {
 				c.raddr = nil
 				fmt.Println("Disconnected")
 			}
+		} else {
+			fmt.Println("Please ensure disconnect")
 		}
 	}
 }
